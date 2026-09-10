@@ -1,0 +1,43 @@
+header {
+    background-color: #222;
+    color: white;
+    padding: 20px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+button:hover {
+    background-color: #3c853e;
+    transition: background-color 0.3s;
+}
+button:active {
+    background-color: #2ee3e7;
+    transition: background-color 0.3s;
+}
+
+main {
+    padding: 20px;
+}
+
+.product {
+    background-color: white;
+    padding: 20px;
+    margin-top: 20px;
+
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+body {
+    margin: 0;
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+}
