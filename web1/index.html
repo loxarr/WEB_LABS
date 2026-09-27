@@ -2,34 +2,65 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-
-    <title>Магазин Попов А.А.</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <h1>Мой магазин</h1>
+        <button type="button" id="cart-toggle">Корзина</button>
     </header>
 
-    <button>Корзина</button>
+    <main>
+        <section>
+            <h2>Каталог товаров</h2>
+
+            <article class="product">
+                <h3>Наушники</h3>
+                <p>Беспроводные наушники</p>
+                <p class="price">Цена: 500 рублей</p>
+                <button type="button">Добавить в корзину</button>
+            </article>
+        </section>
+    </main>
+    <div class="cart-overlay" id="cart-overlay"></div>
+
+    <aside class="cart" id="cart-panel">
+        <div class="cart-header">
+            <h2>Корзина</h2>
+            <button type="button" id="close-cart">Закрыть</button>
+        </div>
+        <ul id="cart-list"></ul>
+        <p id="cart-total">Итого: 0 рублей</p>
+        <button type="button" id="clear-cart">Удалить все</button>
+    </aside>
+    <form id="order-form">
+        <h2>Оформить заказ</h2>
+
+        <label>
+            Имя
+            <input type="text" name="firstName" required>
+        </label>
+
+        <label>
+            Фамилия
+            <input type="text" name="lastName" required>
+        </label>
+
+        <label>
+            Адрес доставки
+            <textarea name="address" required></textarea>
+        </label>
+
+        <label>
+            Контактный номер телефона
+            <input type="tel" name="phone" required>
+        </label>
+
+        <button type="submit">Создать заказ</button>
+    </form>
 
     <script src="script.js"></script>
 </body>
-<main>
-    <section>
-        <h2>Каталог товаров</h2>
-
-        <article class="product">
-            <h3>Наушники</h3>
-
-            <p>Беспроводные наушники</p>
-
-            <p>Цена: 500 рублей</p>
-
-            <button>Добавить в корзину</button>
-        </article>
-    </section>
-</main>
 </html>
