@@ -9,6 +9,9 @@ const cartPanel = document.getElementById('cart-panel');
 const cartToggleButton = document.getElementById('cart-toggle');
 const closeCartButton = document.getElementById('close-cart');
 const cartOverlay = document.getElementById('cart-overlay');
+const showOrderFormButton = document.getElementById('show-order-form');
+const orderForm = document.getElementById('order-form');
+const orderSubmitButton = document.querySelector('#order-form button[type="submit"]');
 
 function openCart() {
     cartPanel.classList.add('open');
@@ -115,6 +118,13 @@ function renderCart() {
 
     cartTotal.textContent = `Итого: ${total} рублей`;
     clearCartButton.disabled = cart.length === 0;
+    showOrderFormButton.disabled = cart.length === 0;
+    showOrderFormButton.hidden = cart.length === 0;
+    orderSubmitButton.disabled = cart.length === 0;
+
+    if (cart.length === 0) {
+        orderForm.classList.remove('visible');
+    }
 }
 
 document.querySelectorAll('.product button').forEach(button => {
@@ -153,10 +163,22 @@ cartToggleButton.addEventListener('click', openCart);
 closeCartButton.addEventListener('click', closeCart);
 cartOverlay.addEventListener('click', closeCart);
 
-const orderForm = document.getElementById('order-form');
+showOrderFormButton.addEventListener('click', () => {
+    if (cart.length === 0) {
+        alert('Ошибка: нельзя оформить заказ, когда корзина пустая. Добавьте хотя бы один товар.');
+        return;
+    }
+
+    orderForm.classList.add('visible');
+});
 
 orderForm.addEventListener('submit', (event) => {
     event.preventDefault();
+
+    if (cart.length === 0) {
+        alert('Ошибка: нельзя оформить заказ, когда корзина пустая. Добавьте хотя бы один товар.');
+        return;
+    }
 
     const formData = new FormData(orderForm);
 
@@ -176,6 +198,7 @@ orderForm.addEventListener('submit', (event) => {
     saveCart();
     renderCart();
     orderForm.reset();
+    orderForm.classList.remove('visible');
 });
 
 renderCart();

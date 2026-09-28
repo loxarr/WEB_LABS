@@ -13,15 +13,42 @@
     </header>
 
     <main>
-        <section>
+        <section class="catalog-section">
             <h2>Каталог товаров</h2>
 
-            <article class="product">
-                <h3>Наушники</h3>
-                <p>Беспроводные наушники</p>
+            <div class="catalog-grid">
+                <article class="product">
+                <img class="product-image" src="https://i.pinimg.com/736x/75/8c/88/758c88cc7cd1fabf8fd7bd5bb65f7b02.jpg" alt="Морская свинка">
+                <h3>Морская свинка</h3>
+                <p>Боевая</p>
                 <p class="price">Цена: 500 рублей</p>
                 <button type="button">Добавить в корзину</button>
             </article>
+
+            <article class="product">
+                <img class="product-image" src="https://i.pinimg.com/736x/f5/33/de/f533de65dc29137d0d4105de7b8b30c3.jpg" alt="Такса">
+                <h3>Такса</h3>
+                <p>Наездная</p>
+                <p class="price">Цена: 1200 рублей</p>
+                <button type="button">Добавить в корзину</button>
+            </article>
+
+            <article class="product">
+                <img class="product-image" src="https://i.pinimg.com/1200x/ec/11/23/ec112393223e8cb44eb7d710e1874448.jpg" alt="Белка">
+                <h3>Белка</h3>
+                <p>Азартная</p>
+                <p class="price">Цена: 900 рублей</p>
+                <button type="button">Добавить в корзину</button>
+            </article>
+
+                <article class="product">
+                    <img class="product-image" src="https://i.pinimg.com/736x/65/ff/de/65ffdebdd37ee348ab2ffef098958ec8.jpg" alt="Собака">
+                    <h3>Собака</h3>
+                    <p>Веселая</p>
+                    <p class="price">Цена: 2000 рублей</p>
+                    <button type="button">Добавить в корзину</button>
+                </article>
+            </div>
         </section>
     </main>
     <div class="cart-overlay" id="cart-overlay"></div>
@@ -34,32 +61,34 @@
         <ul id="cart-list"></ul>
         <p id="cart-total">Итого: 0 рублей</p>
         <button type="button" id="clear-cart">Удалить все</button>
+        <button type="button" id="show-order-form">Оформить заказ</button>
+
+        <form id="order-form" class="hidden">
+            <h2>Оформить заказ</h2>
+
+            <label>
+                Имя
+                <input type="text" name="firstName" required>
+            </label>
+
+            <label>
+                Фамилия
+                <input type="text" name="lastName" required>
+            </label>
+
+            <label>
+                Адрес доставки
+                <textarea name="address" required></textarea>
+            </label>
+
+            <label>
+                Контактный номер телефона
+                <input type="tel" name="phone" required>
+            </label>
+
+            <button type="submit">Создать заказ</button>
+        </form>
     </aside>
-    <form id="order-form">
-        <h2>Оформить заказ</h2>
-
-        <label>
-            Имя
-            <input type="text" name="firstName" required>
-        </label>
-
-        <label>
-            Фамилия
-            <input type="text" name="lastName" required>
-        </label>
-
-        <label>
-            Адрес доставки
-            <textarea name="address" required></textarea>
-        </label>
-
-        <label>
-            Контактный номер телефона
-            <input type="tel" name="phone" required>
-        </label>
-
-        <button type="submit">Создать заказ</button>
-    </form>
 
     <script src="script.js"></script>
 </body>
