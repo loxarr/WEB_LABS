@@ -80,8 +80,8 @@ controls.append(
   ]),
   createSelect('Сортировка', 'date-sort', [
     ['manual', 'Мой порядок'],
-    ['date-asc', 'По дате ↑'],
-    ['date-desc', 'По дате ↓'],
+    ['date-asc', 'По дате (возр.)'],
+    ['date-desc', 'По дате (убыв.)'],
   ]),
 );
 
