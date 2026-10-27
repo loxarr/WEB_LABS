@@ -1,5 +1,3 @@
-'use strict';
-
 const style = document.createElement('link');
 style.rel = 'stylesheet';
 style.href = 'styles.css';
@@ -95,3 +93,41 @@ tasksSection.append(tasksTitle, taskList, emptyMessage);
 
 main.append(formSection, controls, tasksSection);
 document.body.append(header, main);
+
+const tasks = [];
+
+function renderTasks() {
+  taskList.replaceChildren();
+  emptyMessage.hidden = tasks.length > 0;
+
+  tasks.forEach((task) => {
+    const item = createElement('li', '', 'task-item');
+    const taskTitle = createElement('span', task.title);
+    const taskDate = createElement('time', task.date);
+
+    taskDate.dateTime = task.date;
+    item.append(taskTitle, taskDate);
+    taskList.append(item);
+  });
+}
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const titleInput = document.querySelector('#task-title');
+  const dateInput = document.querySelector('#task-date');
+  const title = titleInput.value.trim();
+
+  if (!title) {
+    titleInput.focus();
+    return;
+  }
+
+  tasks.push({
+    title,
+    date: dateInput.value,
+  });
+
+  form.reset();
+  renderTasks();
+});

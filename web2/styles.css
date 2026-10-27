@@ -16,9 +16,7 @@ header {
   text-align: center;
 }
 
-h1,
-h2,
-p {
+h1, h2, p {
   margin-top: 0;
 }
 
@@ -86,6 +84,19 @@ button:hover {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.task-item time {
+  color: #666;
 }
 
 .empty-message {
