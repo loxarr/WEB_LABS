@@ -41,7 +41,7 @@ main {
 .task-form,
 .controls {
   display: grid;
-  grid-template-columns: 2fr 1fr auto;
+  grid-template-columns: 1fr 1.5fr 1fr auto;
   align-items: end;
   gap: 12px;
 }
@@ -95,8 +95,15 @@ button:hover {
   border-radius: 6px;
 }
 
-.task-item span {
+.task-content {
   flex: 1;
+  min-width: 0;
+}
+
+.task-content p {
+  margin: 4px 0 0;
+  color: #666;
+  font-size: 14px;
 }
 
 .task-checkbox {
@@ -105,7 +112,7 @@ button:hover {
   cursor: pointer;
 }
 
-.task-item.completed span {
+.task-item.completed .task-content {
   color: #777;
   text-decoration: line-through;
 }
@@ -114,13 +121,37 @@ button:hover {
   opacity: 0.4;
 }
 
+.task-item.editing {
+  opacity: 1;
+}
+
+.edit-input {
+  flex: 1;
+  min-width: 140px;
+}
+
+.edit-date {
+  flex: 0 0 160px;
+}
+
 .task-item time {
   color: #666;
 }
 
-.delete-button {
+.edit-button,
+.delete-button,
+.save-button,
+.cancel-button {
   width: auto;
   min-height: auto;
+}
+
+.cancel-button {
+  border-color: #6b7280;
+  background: #6b7280;
+}
+
+.delete-button {
   border-color: #dc2626;
   background: #dc2626;
 }
@@ -139,5 +170,9 @@ button:hover {
   .task-form,
   .controls {
     grid-template-columns: 1fr;
+  }
+
+  .task-item {
+    flex-wrap: wrap;
   }
 }
