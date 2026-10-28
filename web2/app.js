@@ -56,11 +56,9 @@ form.id = 'task-form';
 const titleField = createField('Название', 'text', 'task-title', 'Введите задачу');
 titleField.querySelector('input').required = true;
 
-const descriptionField = createField('Описание', 'text', 'task-description', 'Добавьте описание');
-descriptionField.querySelector('input').required = true;
+const descriptionField = createField('Описание (необязательно)', 'text', 'task-description', 'Добавьте описание');
 
-const dateField = createField('Дата', 'date', 'task-date');
-dateField.querySelector('input').required = true;
+const dateField = createField('Дата (необязательно)', 'date', 'task-date');
 
 const addButton = createElement('button', 'Добавить');
 addButton.type = 'submit';
@@ -87,16 +85,31 @@ controls.append(
 
 const tasksSection = createElement('section', '', 'card');
 const tasksTitle = createElement('h2', 'Задачи');
+const dragHint = createElement('p', 'Перетаскивание доступно в режиме «Мой порядок»', 'drag-hint');
 const taskList = createElement('ul', '', 'task-list');
 taskList.id = 'task-list';
 const emptyMessage = createElement('p', 'Список задач пуст', 'empty-message');
 emptyMessage.id = 'empty-message';
-tasksSection.append(tasksTitle, taskList, emptyMessage);
+tasksSection.append(tasksTitle, dragHint, taskList, emptyMessage);
 
 main.append(formSection, controls, tasksSection);
 document.body.append(header, main);
 
-const tasks = [];
+function loadTasks() {
+  try {
+    const savedTasks = JSON.parse(localStorage.getItem('tasks'));
+    return Array.isArray(savedTasks) ? savedTasks : [];
+  } catch {
+    return [];
+  }
+}
+
+const tasks = loadTasks();
+let draggedTask = null;
+
+function saveTasks() {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
 
 function renderTasks() {
   taskList.replaceChildren();
@@ -107,6 +120,7 @@ function renderTasks() {
   const visibleTasks = tasks.filter((task) =>
     task.title.toLowerCase().includes(searchValue),
   );
+  const canDrag = sortValue === 'manual' && statusValue === 'all' && !dateValue && !searchValue;
   const getPriority = (task) => {
     let priority = 0;
 
@@ -120,30 +134,88 @@ function renderTasks() {
   emptyMessage.hidden = visibleTasks.length > 0;
   emptyMessage.textContent = tasks.length ? 'Задачи не найдены' : 'Список задач пуст';
 
-  if (sortValue === 'date-asc') visibleTasks.sort((a, b) => a.date.localeCompare(b.date));
-  if (sortValue === 'date-desc') visibleTasks.sort((a, b) => b.date.localeCompare(a.date));
+  if (sortValue === 'date-asc') {
+    visibleTasks.sort((a, b) => {
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return a.date.localeCompare(b.date);
+    });
+  }
+
+  if (sortValue === 'date-desc') {
+    visibleTasks.sort((a, b) => {
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return b.date.localeCompare(a.date);
+    });
+  }
   visibleTasks.sort((a, b) => getPriority(a) - getPriority(b));
 
   visibleTasks.forEach((task) => {
     const item = createElement('li', '', 'task-item');
+    const dragHandle = createElement('span', '⋮⋮', 'drag-handle');
     const checkbox = createElement('input', '', 'task-checkbox');
     const taskContent = createElement('div', '', 'task-content');
     const taskTitle = createElement('strong', task.title);
-    const taskDescription = createElement('p', task.description);
-    const taskDate = createElement('time', task.date);
+    const taskDescription = createElement('p', task.description || '');
+    const taskDate = createElement('time', task.date || 'Без даты');
     const editButton = createElement('button', 'Изменить', 'edit-button');
     const deleteButton = createElement('button', 'Удалить', 'delete-button');
 
+    item.draggable = canDrag;
+    dragHandle.hidden = !canDrag;
     checkbox.type = 'checkbox';
     checkbox.checked = task.completed;
     checkbox.setAttribute('aria-label', `Выполнить задачу: ${task.title}`);
     item.classList.toggle('completed', task.completed);
     item.classList.toggle('less-important', getPriority(task) > 0);
-    taskDate.dateTime = task.date;
-    taskContent.append(taskTitle, taskDescription);
+    if (task.date) taskDate.dateTime = task.date;
+    taskContent.append(taskTitle);
+    if (task.description) taskContent.append(taskDescription);
+
+    item.addEventListener('dragstart', (event) => {
+      draggedTask = task;
+      item.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', task.title);
+    });
+
+    item.addEventListener('dragover', (event) => {
+      if (!draggedTask || draggedTask === task) return;
+      event.preventDefault();
+      item.classList.add('drag-over');
+    });
+
+    item.addEventListener('dragleave', () => {
+      item.classList.remove('drag-over');
+    });
+
+    item.addEventListener('drop', (event) => {
+      event.preventDefault();
+      if (!draggedTask || draggedTask === task) return;
+
+      const taskPosition = item.getBoundingClientRect();
+      const insertAfter = event.clientY > taskPosition.top + taskPosition.height / 2;
+
+      tasks.splice(tasks.indexOf(draggedTask), 1);
+      let newIndex = tasks.indexOf(task);
+      if (insertAfter) newIndex += 1;
+      tasks.splice(newIndex, 0, draggedTask);
+      draggedTask = null;
+      saveTasks();
+      renderTasks();
+    });
+
+    item.addEventListener('dragend', () => {
+      draggedTask = null;
+      item.classList.remove('dragging');
+    });
 
     checkbox.addEventListener('change', () => {
       task.completed = checkbox.checked;
+      saveTasks();
       renderTasks();
     });
 
@@ -159,9 +231,9 @@ function renderTasks() {
       titleInput.type = 'text';
       titleInput.value = task.title;
       descriptionInput.type = 'text';
-      descriptionInput.value = task.description;
+      descriptionInput.value = task.description || '';
       dateInput.type = 'date';
-      dateInput.value = task.date;
+      dateInput.value = task.date || '';
       saveButton.type = 'button';
       cancelButton.type = 'button';
 
@@ -174,19 +246,10 @@ function renderTasks() {
           return;
         }
 
-        if (!newDescription) {
-          descriptionInput.focus();
-          return;
-        }
-
-        if (!dateInput.value) {
-          dateInput.focus();
-          return;
-        }
-
         task.title = newTitle;
         task.description = newDescription;
         task.date = dateInput.value;
+        saveTasks();
         renderTasks();
       });
 
@@ -200,10 +263,11 @@ function renderTasks() {
     deleteButton.setAttribute('aria-label', `Удалить задачу: ${task.title}`);
     deleteButton.addEventListener('click', () => {
       tasks.splice(tasks.indexOf(task), 1);
+      saveTasks();
       renderTasks();
     });
 
-    item.append(checkbox, taskContent, taskDate, editButton, deleteButton);
+    item.append(dragHandle, checkbox, taskContent, taskDate, editButton, deleteButton);
     taskList.append(item);
   });
 }
@@ -222,11 +286,6 @@ form.addEventListener('submit', (event) => {
     return;
   }
 
-  if (!description) {
-    descriptionInput.focus();
-    return;
-  }
-
   tasks.push({
     title,
     description,
@@ -234,6 +293,7 @@ form.addEventListener('submit', (event) => {
     completed: false,
   });
 
+  saveTasks();
   form.reset();
   renderTasks();
 });
@@ -242,3 +302,5 @@ document.querySelector('#date-sort').addEventListener('change', renderTasks);
 document.querySelector('#status-filter').addEventListener('change', renderTasks);
 document.querySelector('#task-search').addEventListener('input', renderTasks);
 document.querySelector('#date-filter').addEventListener('change', renderTasks);
+
+renderTasks();

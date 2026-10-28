@@ -86,6 +86,11 @@ button:hover {
   list-style: none;
 }
 
+.drag-hint {
+  color: #777;
+  font-size: 14px;
+}
+
 .task-item {
   display: flex;
   align-items: center;
@@ -93,6 +98,21 @@ button:hover {
   gap: 16px;
   padding: 14px;
   border-radius: 6px;
+}
+
+.drag-handle {
+  color: #888;
+  cursor: grab;
+  font-size: 20px;
+  letter-spacing: -4px;
+}
+
+.task-item.dragging {
+  opacity: 0.3;
+}
+
+.task-item.drag-over {
+  background: #dbeafe;
 }
 
 .task-content {
