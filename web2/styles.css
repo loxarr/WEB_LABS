@@ -88,6 +88,7 @@ button:hover {
 
 .task-item {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 14px;
@@ -95,8 +96,23 @@ button:hover {
   border-radius: 6px;
 }
 
+.task-item span {
+  flex: 1;
+}
+
 .task-item time {
   color: #666;
+}
+
+.delete-button {
+  width: auto;
+  min-height: auto;
+  border-color: #dc2626;
+  background: #dc2626;
+}
+
+.delete-button:hover {
+  background: #b91c1c;
 }
 
 .empty-message {

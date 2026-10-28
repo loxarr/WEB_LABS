@@ -44,8 +44,7 @@ function createSelect(labelText, selectId, options) {
 
 const header = createElement('header');
 const title = createElement('h1', 'Список задач');
-const subtitle = createElement('p', 'Планируйте дела и отмечайте выполненные задачи');
-header.append(title, subtitle);
+header.append(title);
 
 const main = createElement('main');
 
@@ -100,13 +99,21 @@ function renderTasks() {
   taskList.replaceChildren();
   emptyMessage.hidden = tasks.length > 0;
 
-  tasks.forEach((task) => {
+  tasks.forEach((task, index) => {
     const item = createElement('li', '', 'task-item');
     const taskTitle = createElement('span', task.title);
     const taskDate = createElement('time', task.date);
+    const deleteButton = createElement('button', 'Удалить', 'delete-button');
 
     taskDate.dateTime = task.date;
-    item.append(taskTitle, taskDate);
+    deleteButton.type = 'button';
+    deleteButton.setAttribute('aria-label', `Удалить задачу: ${task.title}`);
+    deleteButton.addEventListener('click', () => {
+      tasks.splice(index, 1);
+      renderTasks();
+    });
+
+    item.append(taskTitle, taskDate, deleteButton);
     taskList.append(item);
   });
 }
