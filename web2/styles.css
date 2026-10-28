@@ -4,14 +4,14 @@
 
 body {
   margin: 0;
-  background: #f3f4f6;
+  background: #eef7ee;
   color: #222;
   font-family: Arial, sans-serif;
 }
 
 header {
   padding: 32px 20px;
-  background: #2563eb;
+  background: #3f7d58;
   color: white;
   text-align: center;
 }
@@ -68,14 +68,14 @@ button {
 }
 
 button {
-  border-color: #2563eb;
-  background: #2563eb;
+  border-color: #3f7d58;
+  background: #3f7d58;
   color: white;
   cursor: pointer;
 }
 
 button:hover {
-  background: #1d4ed8;
+  background: #326747;
 }
 
 .task-list {
@@ -84,11 +84,6 @@ button:hover {
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-.drag-hint {
-  color: #777;
-  font-size: 14px;
 }
 
 .task-item {
@@ -112,7 +107,7 @@ button:hover {
 }
 
 .task-item.drag-over {
-  background: #dbeafe;
+  background: #dcefdc;
 }
 
 .task-content {
@@ -155,7 +150,10 @@ button:hover {
 }
 
 .task-item time {
+  display: block;
+  margin-top: 6px;
   color: #666;
+  font-size: 13px;
 }
 
 .edit-button,

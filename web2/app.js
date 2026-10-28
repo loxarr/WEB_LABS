@@ -42,6 +42,10 @@ function createSelect(labelText, selectId, options) {
   return field;
 }
 
+function formatDate(date) {
+  return date ? date.split('-').reverse().join('.') : '';
+}
+
 const header = createElement('header');
 const title = createElement('h1', 'Список задач');
 header.append(title);
@@ -73,8 +77,10 @@ controls.append(
   createField('Дата', 'date', 'date-filter'),
   createSelect('Статус', 'status-filter', [
     ['all', 'Все'],
-    ['active', 'Сначала невыполненные'],
-    ['completed', 'Сначала выполненные'],
+    ['active-first', 'Сначала невыполненные'],
+    ['completed-first', 'Сначала выполненные'],
+    ['active-only', 'Только невыполненные'],
+    ['completed-only', 'Только выполненные'],
   ]),
   createSelect('Сортировка', 'date-sort', [
     ['manual', 'Мой порядок'],
@@ -85,12 +91,11 @@ controls.append(
 
 const tasksSection = createElement('section', '', 'card');
 const tasksTitle = createElement('h2', 'Задачи');
-const dragHint = createElement('p', 'Перетаскивание доступно в режиме «Мой порядок»', 'drag-hint');
 const taskList = createElement('ul', '', 'task-list');
 taskList.id = 'task-list';
 const emptyMessage = createElement('p', 'Список задач пуст', 'empty-message');
 emptyMessage.id = 'empty-message';
-tasksSection.append(tasksTitle, dragHint, taskList, emptyMessage);
+tasksSection.append(tasksTitle, taskList, emptyMessage);
 
 main.append(formSection, controls, tasksSection);
 document.body.append(header, main);
@@ -117,16 +122,22 @@ function renderTasks() {
   const sortValue = document.querySelector('#date-sort').value;
   const searchValue = document.querySelector('#task-search').value.trim().toLowerCase();
   const dateValue = document.querySelector('#date-filter').value;
-  const visibleTasks = tasks.filter((task) =>
-    task.title.toLowerCase().includes(searchValue),
-  );
+  const visibleTasks = tasks.filter((task) => {
+    const matchesTitle = task.title.toLowerCase().includes(searchValue);
+    let matchesStatus = true;
+
+    if (statusValue === 'active-only') matchesStatus = !task.completed;
+    if (statusValue === 'completed-only') matchesStatus = task.completed;
+
+    return matchesTitle && matchesStatus;
+  });
   const canDrag = sortValue === 'manual' && statusValue === 'all' && !dateValue && !searchValue;
   const getPriority = (task) => {
     let priority = 0;
 
     if (dateValue && task.date !== dateValue) priority += 1;
-    if (statusValue === 'active' && task.completed) priority += 1;
-    if (statusValue === 'completed' && !task.completed) priority += 1;
+    if (statusValue === 'active-first' && task.completed) priority += 1;
+    if (statusValue === 'completed-first' && !task.completed) priority += 1;
 
     return priority;
   };
@@ -160,7 +171,7 @@ function renderTasks() {
     const taskContent = createElement('div', '', 'task-content');
     const taskTitle = createElement('strong', task.title);
     const taskDescription = createElement('p', task.description || '');
-    const taskDate = createElement('time', task.date || 'Без даты');
+    const taskDate = createElement('time', formatDate(task.date));
     const editButton = createElement('button', 'Изменить', 'edit-button');
     const deleteButton = createElement('button', 'Удалить', 'delete-button');
 
@@ -174,6 +185,7 @@ function renderTasks() {
     if (task.date) taskDate.dateTime = task.date;
     taskContent.append(taskTitle);
     if (task.description) taskContent.append(taskDescription);
+    if (task.date) taskContent.append(taskDate);
 
     item.addEventListener('dragstart', (event) => {
       draggedTask = task;
@@ -267,7 +279,7 @@ function renderTasks() {
       renderTasks();
     });
 
-    item.append(dragHandle, checkbox, taskContent, taskDate, editButton, deleteButton);
+    item.append(dragHandle, checkbox, taskContent, editButton, deleteButton);
     taskList.append(item);
   });
 }
